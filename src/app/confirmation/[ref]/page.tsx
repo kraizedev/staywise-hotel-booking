@@ -5,8 +5,9 @@ import { fmt, money, nightsBetween } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
 
-export default async function Confirmation({ params }: { params: { ref: string } }) {
-  const b = await prisma.booking.findUnique({ where: { reference: params.ref }, include: { roomType: true } });
+export default async function Confirmation({ params }: { params: Promise<{ ref: string }> }) {
+  const { ref } = await params;
+  const b = await prisma.booking.findUnique({ where: { reference: ref }, include: { roomType: true } });
   if (!b) notFound();
   return (
     <section className="confirmation">
