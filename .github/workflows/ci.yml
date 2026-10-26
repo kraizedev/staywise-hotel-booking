@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install
+      - name: Validate Prisma schema
+        run: npx prisma validate
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/hotel
+          DIRECT_URL: postgresql://test:test@localhost:5432/hotel
+      - name: Build Next.js app
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/hotel
+          DIRECT_URL: postgresql://test:test@localhost:5432/hotel
+          AUTH_SECRET: ci-only-secret-with-at-least-32-characters
+          ADMIN_EMAIL: ci@example.com
+          ADMIN_PASSWORD: ci-only-password-123
+          HOTEL_NAME: CI Hotel
+          CURRENCY: USD
