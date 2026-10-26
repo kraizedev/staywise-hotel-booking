@@ -1,0 +1,74 @@
+/* ===== DESIGN TOKENS: change these first when reskinning ===== */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f6f6f4;
+  --color-text: #1c1c1c;
+  --color-muted: #6b6b6b;
+  --color-accent: #1f4e5f;
+  --color-accent-text: #ffffff;
+  --color-border: #dcdcd6;
+  --color-error: #b3261e;
+  --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading: var(--font-body);
+  --radius: 6px;
+  --space: 1rem;
+  --max-width: 1080px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-body); background: var(--color-bg); color: var(--color-text); line-height: 1.5; }
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+.container { max-width: var(--max-width); margin: 0 auto; padding: calc(var(--space) * 2) var(--space); }
+.muted { color: var(--color-muted); }
+.error { color: var(--color-error); }
+.price { font-weight: 600; }
+.empty { padding: var(--space); background: var(--color-surface); border-radius: var(--radius); }
+
+/* Layout chrome */
+.site-header { display: flex; justify-content: space-between; align-items: center; padding: var(--space) calc(var(--space) * 2); border-bottom: 1px solid var(--color-border); }
+.site-header nav a { margin-left: var(--space); text-decoration: none; }
+.brand { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; text-decoration: none; }
+.site-footer { padding: calc(var(--space) * 2); text-align: center; color: var(--color-muted); border-top: 1px solid var(--color-border); }
+
+/* Buttons and fields */
+.btn { display: inline-block; padding: .6rem 1.1rem; background: var(--color-accent); color: var(--color-accent-text); border: 1px solid var(--color-accent); border-radius: var(--radius); font: inherit; cursor: pointer; text-decoration: none; }
+.btn--ghost { background: transparent; color: var(--color-text); border-color: var(--color-border); padding: .3rem .7rem; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+label { display: grid; gap: .25rem; font-size: .9rem; }
+input, textarea { font: inherit; padding: .55rem .7rem; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-bg); color: var(--color-text); }
+
+/* Search */
+.hero { padding: calc(var(--space) * 3) 0; }
+.search-form { display: flex; flex-wrap: wrap; gap: var(--space); align-items: end; margin: var(--space) 0 calc(var(--space) * 2); }
+
+/* Rooms */
+.room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: calc(var(--space) * 1.5); }
+.room-card { border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; background: var(--color-bg); }
+.room-card__img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.room-card__img--empty { background: var(--color-surface); }
+.room-card__body { padding: var(--space); }
+.room-detail { display: grid; grid-template-columns: 1fr 360px; gap: calc(var(--space) * 2); align-items: start; }
+.gallery { display: grid; gap: var(--space); margin-bottom: var(--space); }
+.booking-form, .admin-form, .login-form { display: grid; gap: var(--space); }
+.room-detail aside { padding: var(--space); background: var(--color-surface); border-radius: var(--radius); }
+.total { font-weight: 600; }
+
+/* Confirmation */
+.confirmation dl { display: grid; grid-template-columns: max-content 1fr; gap: .4rem 1.5rem; }
+.confirmation dt { color: var(--color-muted); }
+.ref { font-size: 1.4rem; letter-spacing: .05em; }
+
+/* Admin */
+.login-form { max-width: 360px; margin: 0 auto; }
+.admin__bar { display: flex; justify-content: space-between; align-items: center; }
+.admin section { margin-bottom: calc(var(--space) * 3); }
+.admin-form { max-width: 480px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th, td { text-align: left; padding: .6rem; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+
+@media (max-width: 800px) { .room-detail { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
