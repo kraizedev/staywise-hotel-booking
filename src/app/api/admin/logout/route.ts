@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { COOKIE } from "@/lib/auth";
 
 export async function POST() {
-  cookies().delete(COOKIE);
+  const cookieStore = await cookies();
+  cookieStore.delete(COOKIE);
   return NextResponse.json({ ok: true });
 }
