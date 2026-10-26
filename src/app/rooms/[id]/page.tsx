@@ -5,8 +5,12 @@ import BookingForm from "@/components/BookingForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function RoomPage({ params, searchParams }: { params: { id: string }; searchParams: { checkIn?: string; checkOut?: string; guests?: string } }) {
-  const room = await prisma.roomType.findUnique({ where: { id: params.id } });
+type Params = Promise<{ id: string }>;
+type SearchParams = Promise<{ checkIn?: string; checkOut?: string; guests?: string }>;
+
+export default async function RoomPage({ params, searchParams }: { params: Params; searchParams: SearchParams }) {
+  const [{ id }, search] = await Promise.all([params, searchParams]);
+  const room = await prisma.roomType.findUnique({ where: { id } });
   if (!room || !room.active) notFound();
   return (
     <div className="room-detail">
@@ -22,7 +26,7 @@ export default async function RoomPage({ params, searchParams }: { params: { id:
       <aside>
         <h2>Reserve</h2>
         <BookingForm roomTypeId={room.id} price={room.pricePerNight} capacity={room.capacity}
-          checkIn={searchParams.checkIn ?? ""} checkOut={searchParams.checkOut ?? ""} guests={searchParams.guests ?? "2"} />
+          checkIn={search.checkIn ?? ""} checkOut={search.checkOut ?? ""} guests={search.guests ?? "2"} />
       </aside>
     </div>
   );
