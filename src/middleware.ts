@@ -6,11 +6,16 @@ export async function middleware(req: NextRequest) {
   if (pathname === "/admin/login" || pathname === "/api/admin/login") return NextResponse.next();
 
   const token = req.cookies.get("admin_session")?.value;
-  let ok = false;
-  if (token) {
-    try { await jwtVerify(token, new TextEncoder().encode(process.env.AUTH_SECRET || "dev-secret")); ok = true; } catch {}
+  const secret = process.env.AUTH_SECRET;
+  if (token && secret) {
+    try {
+      await jwtVerify(token, new TextEncoder().encode(secret));
+      return NextResponse.next();
+    } catch {
+      // Invalid or expired sessions are rejected below.
+    }
   }
-  if (ok) return NextResponse.next();
+
   if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   return NextResponse.redirect(new URL("/admin/login", req.url));
 }
