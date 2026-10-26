@@ -3,7 +3,7 @@ services:
     name: hotel-booking
     runtime: node
     plan: free
-    buildCommand: npm ci && npx prisma migrate deploy && npm run build
+    buildCommand: npm install && npx prisma migrate deploy && npm run build
     startCommand: npm start
     healthCheckPath: /
     envVars:
