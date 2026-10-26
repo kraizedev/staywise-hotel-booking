@@ -6,8 +6,10 @@ import SearchForm from "@/components/SearchForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function Rooms({ searchParams }: { searchParams: { checkIn?: string; checkOut?: string; guests?: string } }) {
-  const { checkIn, checkOut, guests = "2" } = searchParams;
+type RoomSearchParams = { checkIn?: string; checkOut?: string; guests?: string };
+
+export default async function Rooms({ searchParams }: { searchParams: Promise<RoomSearchParams> }) {
+  const { checkIn, checkOut, guests = "2" } = await searchParams;
   const guestCount = /^\d+$/.test(guests) ? Number(guests) : 0;
   const searching = isValidDate(checkIn) && isValidDate(checkOut)
     && toDate(checkOut!) > toDate(checkIn!)
