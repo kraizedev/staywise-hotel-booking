@@ -15,7 +15,8 @@ export async function createSession(adminId: string) {
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(key());
-  cookies().set(COOKIE, token, {
+  const cookieStore = await cookies();
+  cookieStore.set(COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
@@ -25,7 +26,8 @@ export async function createSession(adminId: string) {
 }
 
 export async function isAdmin() {
-  const t = cookies().get(COOKIE)?.value;
+  const cookieStore = await cookies();
+  const t = cookieStore.get(COOKIE)?.value;
   if (!t) return false;
   try { await jwtVerify(t, key()); return true; } catch { return false; }
 }
