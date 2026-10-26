@@ -1,0 +1,30 @@
+name: Import hotel booking source
+on:
+  push:
+    paths:
+      - hotel-booking.zip
+    branches:
+      - main
+permissions:
+  contents: write
+jobs:
+  import-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract project into repository root
+        run: |
+          set -euo pipefail
+          test -f hotel-booking.zip
+          unzip -q hotel-booking.zip
+          test -f hotel-booking/package.json
+          cp -a hotel-booking/. .
+          rm -rf hotel-booking hotel-booking.zip
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Import hotel booking application source"
+          git push
