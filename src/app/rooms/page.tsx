@@ -8,11 +8,15 @@ export const dynamic = "force-dynamic";
 
 export default async function Rooms({ searchParams }: { searchParams: { checkIn?: string; checkOut?: string; guests?: string } }) {
   const { checkIn, checkOut, guests = "2" } = searchParams;
-  const searching = isValidDate(checkIn) && isValidDate(checkOut) && toDate(checkOut!) > toDate(checkIn!);
+  const guestCount = /^\d+$/.test(guests) ? Number(guests) : 0;
+  const searching = isValidDate(checkIn) && isValidDate(checkOut)
+    && toDate(checkOut!) > toDate(checkIn!)
+    && Number.isInteger(guestCount) && guestCount >= 1 && guestCount <= 20;
+
   const rooms = searching
-    ? await searchAvailable(toDate(checkIn!), toDate(checkOut!), Number(guests))
+    ? await searchAvailable(toDate(checkIn!), toDate(checkOut!), guestCount)
     : await prisma.roomType.findMany({ where: { active: true }, orderBy: { pricePerNight: "asc" } });
-  const query = searching ? `?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}` : "";
+  const query = searching ? `?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guestCount}` : "";
 
   return (
     <>
