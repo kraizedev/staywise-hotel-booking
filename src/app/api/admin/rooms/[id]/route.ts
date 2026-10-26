@@ -1,17 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { roomSchema } from "../route";
+import { roomSchema } from "@/lib/validation";
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const p = roomSchema.partial().safeParse(await req.json());
+  let input: unknown;
+  try { input = await req.json(); } catch {
+    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+  }
+  const p = roomSchema.partial().safeParse(input);
   if (!p.success) return NextResponse.json({ error: "Invalid room data" }, { status: 400 });
-  return NextResponse.json(await prisma.roomType.update({ where: { id: params.id }, data: p.data }));
+  try {
+    return NextResponse.json(await prisma.roomType.update({ where: { id: params.id }, data: p.data }));
+  } catch {
+    return NextResponse.json({ error: "Room not found." }, { status: 404 });
+  }
 }
 
-// Rooms with bookings can't be deleted; deactivate them instead (PATCH active:false)
+// Rooms with bookings cannot be deleted; deactivate them instead.
 export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
   if (await prisma.booking.count({ where: { roomTypeId: params.id } }))
     return NextResponse.json({ error: "Room has bookings. Deactivate it instead." }, { status: 409 });
-  await prisma.roomType.delete({ where: { id: params.id } });
-  return NextResponse.json({ ok: true });
+  try {
+    await prisma.roomType.delete({ where: { id: params.id } });
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Room not found." }, { status: 404 });
+  }
 }
