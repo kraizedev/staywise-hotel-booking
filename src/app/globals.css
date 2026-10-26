@@ -42,7 +42,7 @@ input, textarea { font: inherit; padding: .55rem .7rem; border: 1px solid var(--
 
 /* Search */
 .hero { padding: calc(var(--space) * 3) 0; }
-.search-form { display: flex; flex-wrap: wrap; gap: var(--space); align-items: end; margin: var(--space) 0 calc(var(--space) * 2); }
+.search-form { display: flex; flex-wrap: wrap; gap: var(--space); align-items: flex-end; margin: var(--space) 0 calc(var(--space) * 2); }
 
 /* Rooms */
 .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: calc(var(--space) * 1.5); }
