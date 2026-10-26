@@ -6,9 +6,36 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-and-build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: hotel
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d hotel"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/hotel?schema=public
+      DIRECT_URL: postgresql://postgres:postgres@localhost:5432/hotel?schema=public
+      AUTH_SECRET: ci-only-secret-with-at-least-32-characters
+      ADMIN_EMAIL: ci@example.com
+      ADMIN_PASSWORD: ci-only-password-123
+      HOTEL_NAME: CI Hotel
+      CURRENCY: USD
+      NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -20,16 +47,7 @@ jobs:
         run: npm install
       - name: Validate Prisma schema
         run: npx prisma validate
-        env:
-          DATABASE_URL: postgresql://test:test@localhost:5432/hotel
-          DIRECT_URL: postgresql://test:test@localhost:5432/hotel
+      - name: Apply migrations to a clean PostgreSQL database
+        run: npx prisma migrate deploy
       - name: Build Next.js app
         run: npm run build
-        env:
-          DATABASE_URL: postgresql://test:test@localhost:5432/hotel
-          DIRECT_URL: postgresql://test:test@localhost:5432/hotel
-          AUTH_SECRET: ci-only-secret-with-at-least-32-characters
-          ADMIN_EMAIL: ci@example.com
-          ADMIN_PASSWORD: ci-only-password-123
-          HOTEL_NAME: CI Hotel
-          CURRENCY: USD
