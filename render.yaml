@@ -3,8 +3,9 @@ services:
     name: hotel-booking
     runtime: node
     plan: free
-    buildCommand: npm install && npx prisma migrate deploy && npm run build
+    buildCommand: npm ci && npx prisma migrate deploy && npm run build
     startCommand: npm start
+    healthCheckPath: /
     envVars:
       - key: DATABASE_URL
         sync: false
@@ -12,6 +13,10 @@ services:
         sync: false
       - key: AUTH_SECRET
         generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
